@@ -398,3 +398,4 @@ FodyWeavers.xsd
 *.sln.iml
 /WG.Worker/Versions
 /WG.Worker/.vscode
+/WG.Worker/appsettings.Development.json
