@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-WGDNSWorker-09a30bf5-e32e-4ebc-891f-044f86fcfe10</UserSecretsId>
     <PackAsTool>True</PackAsTool>
+	<Version>1.0.0_beta-2</Version>
+	<Authors>Wisegar.org - Yariel Rodriguez</Authors>
   </PropertyGroup>
 
   <ItemGroup>
