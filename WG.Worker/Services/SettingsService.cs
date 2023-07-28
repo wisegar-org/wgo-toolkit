@@ -128,6 +128,13 @@ namespace WGOvh.Services
 			}
 		}
 
+		public static async Task CleanSettingsAsync()
+		{
+			AppSettingsModel settingsFile = GetSettingsFile();
+			settingsFile.OvhSettings = new OvhSettings();
+			await SaveAppSettingsAsync(settingsFile);
+		}
+
 		public static async Task GetInputSettingsAsync() {
 
 			AppSettingsModel settingsFile = GetSettingsFile();
@@ -142,6 +149,42 @@ namespace WGOvh.Services
 			GetInputSubDomainSettings(settingsFile);
 
 			await SaveAppSettingsAsync(settingsFile);
+		}
+
+		public static void PrintSettings()
+		{
+			AppSettingsModel settingsFile = GetSettingsFile();
+			settingsFile.OvhSettings ??= new OvhSettings();
+			AnsiConsole.WriteLine($"Endpoint: {settingsFile.OvhSettings.ApiUrl}");
+			AnsiConsole.WriteLine($"ApplicationKey: {settingsFile.OvhSettings.ApplicationKey}");
+			AnsiConsole.WriteLine($"ApplicationSecret: {settingsFile.OvhSettings.ApplicationSecret}");
+			AnsiConsole.WriteLine($"ConsumerKey: {settingsFile.OvhSettings.ConsumerKey}");
+
+			if (settingsFile.OvhSettings.Domains.Count == 0)
+			{
+				AnsiConsole.WriteLine("Domains: []");
+			}
+			else
+			{
+				AnsiConsole.WriteLine("Domains: ");
+				foreach (var domain in settingsFile.OvhSettings.Domains)
+				{
+					AnsiConsole.WriteLine(domain);
+				}
+			}
+
+			if (settingsFile.OvhSettings.SubDomains.Count == 0)
+			{
+				AnsiConsole.WriteLine("SubDomains: []");
+			}
+			else
+			{
+				AnsiConsole.WriteLine("SubDomains: ");
+				foreach (var subDomain in settingsFile.OvhSettings.SubDomains)
+				{
+					AnsiConsole.WriteLine(subDomain);
+				}
+			}
 		}
 	}
 }

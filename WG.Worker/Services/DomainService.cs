@@ -1,6 +1,5 @@
 using Ovh.Api;
 using System.Net;
-using System.Text.Json;
 using WGOvh.Models;
 using WGOvh.Services;
 using WGOvh.Settings;
@@ -28,20 +27,47 @@ public class DomainService
 		if (!string.IsNullOrEmpty(recordDNS.subDomain)) domain = $"{recordDNS.subDomain}.{domain}";
 		return domain;
 	}
-	public bool ToBeUpdated(string defaultDomain)
+	public static bool IsSubDomain(RecordDNS recordDNS)
 	{
-		var defaultDomainExist = false;
-		if (ovhSettings.Domains == null || ovhSettings.Domains.Count == 0) return defaultDomainExist;
-		foreach (var domain in ovhSettings.Domains)
+		var isSubDomain = false;
+		var domain = string.Empty; if (recordDNS == null) return isSubDomain;
+		if (!string.IsNullOrEmpty(recordDNS.zone)) throw new ArgumentException("Invalid DNS Record. Zone not found");
+		if (!string.IsNullOrEmpty(recordDNS.subDomain)) {
+			isSubDomain = true;
+		}
+		return isSubDomain;
+	}
+
+
+	public List<string> GetUpdatableDomains(string baseDomain)
+	{
+		List<string> result = new();
+
+		if (ovhSettings.Domains != null && ovhSettings.Domains.Count > 0)
 		{
-			if (domain == null) continue;
-			if (domain.ToUpper().Equals(defaultDomain.ToUpper()))
+			foreach (var domain in ovhSettings.Domains)
 			{
-				defaultDomainExist = true;
-				break;
+				if (domain == null) continue;
+				if (domain.ToUpper().EndsWith(baseDomain.ToUpper()))
+				{
+					result.Add(domain);
+				}
 			}
 		}
-		return defaultDomainExist;
+
+
+		if (ovhSettings.SubDomains != null && ovhSettings.SubDomains.Count > 0)
+		{
+			foreach (var subDomain in ovhSettings.SubDomains)
+			{
+				if (subDomain == null) continue;
+				if (subDomain.ToUpper().EndsWith(baseDomain.ToUpper()))
+				{
+					result.Add(subDomain);
+				}
+			}
+		}
+		return result;
 	}
 
 	public async Task<RecordDNS> GetDnsRecord(string domainName, long dsnRecordId) {
@@ -55,17 +81,18 @@ public class DomainService
 	}
 
 	public async Task<RecordDNS> PutRecordDNS(string domain, long recordId, RecordDNS recordDNS) {
-		var serialitedRecord = JsonSerializer.Serialize(recordDNS);
 		await _client.PutAsync($"/domain/zone/{domain}/record/{recordId}", recordDNS);
 		return await  GetDnsRecord(domain, recordId);
 	}
 
 	public async Task UpdateDomains(IPAddress publicIp) {
 		var domains = await GetDomains();
+		
 		foreach (var domain in domains)
 		{
-
-			if (!ToBeUpdated(domain)) continue;
+			List<string> toBeUpdate = GetUpdatableDomains(domain);
+			if (toBeUpdate == null || toBeUpdate.Count == 0) continue;
+				
 			var domainRecordsId = await GetDomainDNSRecords(domain);
 			if (domainRecordsId == null) continue;
 
@@ -74,19 +101,24 @@ public class DomainService
 				{
 					var domainrecord = await GetDnsRecord(domain, recordId);
 					if (domainrecord == null) continue;
-					if (domain.ToUpper() != GetFullDomain(domainrecord).ToUpper()) continue;
-					if (domainrecord.target == publicIp.ToString()) continue;
-					domainrecord.target = publicIp.ToString();
-					_logger.LogInformation($"Updating domain {domain} to ip {publicIp.ToString()}");
-					await PutRecordDNS(domain, recordId, domainrecord);
-					_logger.LogInformation($"Domain {domain} updated to ip {publicIp.ToString()}");
+
+
+					foreach (var settingsDomain in toBeUpdate)
+					{
+						_logger.LogInformation($"WGO Worker: settings domain: {settingsDomain} - baseDomain: {domain} - full record name: {GetFullDomain(domainrecord)}");
+						if (settingsDomain.ToUpper() != GetFullDomain(domainrecord).ToUpper()) continue;
+						if (domainrecord.target == publicIp.ToString()) continue;
+						domainrecord.target = publicIp.ToString();
+						await PutRecordDNS(domain, recordId, domainrecord);
+						_logger.LogInformation($"WGO Worker: settings domain: {settingsDomain} =>  Updated!");
+					}
 
 				} catch (Exception e) {					
 					_logger.LogError(e.Message, e);
+
 				}
 			}
 
 		}
 	}
-
 }
