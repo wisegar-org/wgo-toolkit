@@ -34,8 +34,7 @@ if (args.Length > 0 && args[0] == "-s")
 }
 
 
-
-IHost host = AppBuilder.Build(args)
+IHost host = Host.CreateDefaultBuilder(args)
 	.ConfigureServices((hostContext, services) =>
 	{
 		services.AddHostedService<WorkerService>();
