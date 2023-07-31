@@ -2,6 +2,7 @@
   "profiles": {
     "WG.Worker": {
       "commandName": "Project",
+      "commandLineArgs": "-s",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
       },
