@@ -1,9 +1,0 @@
-[Unit]
-Description=WG Worker Service
-
-[Service]
-Type=notify
-ExecStart=/opt/wg/wg-worker/wg-worker
-
-[Install]
-WantedBy=multi-user.target

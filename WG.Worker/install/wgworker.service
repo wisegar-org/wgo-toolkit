@@ -1,0 +1,14 @@
+ GNU nano 5.4                                                 /etc/systemd/system/wgworker.service                                                           
+[Unit]
+Description=WGWorkerService
+
+[Service]
+Type=notify
+ExecStart=/opt/wg/worker
+WorkingDirectory=/opt/wg
+Restart=always
+RestartSec=10
+SyslogIdentifier=WGWorkerService
+
+[Install]
+WantedBy=multi-user.target

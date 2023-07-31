@@ -1,8 +1,8 @@
-mkdir -p /opt/wg/wg-worker
-cp -u WG.Worker /opt/wg/wg-worker/wg-worker
-cp  -n appsettings.json /opt/wg/wg-worker
-chmod +x /opt/wg/wg-worker/wg-worker
-cp wg-worker.service /etc/systemd/system/
+mkdir -p /opt/wg/
+cp -u WG.Worker /opt/wg/worker
+cp -n appsettings.json /opt/wg/appsettings.json
+chmod +x /opt/wg/worker
+cp wgworker.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl start wg-worker.service
-systemctl status wg-worker.service
+systemctl start wgworker.service
+systemctl status wgworker.service
