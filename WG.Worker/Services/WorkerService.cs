@@ -39,7 +39,7 @@ namespace WGOvh.Services
 					_logger.LogError($"WGO Worker error. {e.Message}", e);
 				} 
                   
-				await Task.Delay(5000, stoppingToken);
+				await Task.Delay(60000, stoppingToken);
             }
         }
     }
