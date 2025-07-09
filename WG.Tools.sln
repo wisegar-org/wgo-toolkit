@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WG.Worker", "WG.Worker\WG.Worker.csproj", "{0E9DBD4F-7600-4500-9877-12B9423DFEEC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WG.PDFTools", "WG.PdfTools\WG.PDFTools.csproj", "{8386445D-2FA4-44D0-A07B-7B77A928250A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,12 @@ Global
 		{0E9DBD4F-7600-4500-9877-12B9423DFEEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E9DBD4F-7600-4500-9877-12B9423DFEEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E9DBD4F-7600-4500-9877-12B9423DFEEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8386445D-2FA4-44D0-A07B-7B77A928250A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8386445D-2FA4-44D0-A07B-7B77A928250A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8386445D-2FA4-44D0-A07B-7B77A928250A}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{8386445D-2FA4-44D0-A07B-7B77A928250A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8386445D-2FA4-44D0-A07B-7B77A928250A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8386445D-2FA4-44D0-A07B-7B77A928250A}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
