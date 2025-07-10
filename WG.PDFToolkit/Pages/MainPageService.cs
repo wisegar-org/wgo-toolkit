@@ -1,37 +1,62 @@
-﻿using System.Diagnostics;
+﻿using QuestPDF.Fluent;
+using System.Diagnostics;
 
-namespace WG.PdfTools
+namespace WG.PdfTools.Pages
 {
-    public partial class MainPage : ContentPage
+    public class MainPageService
     {
-        int count = 0;
-        List<string> items = [];
-
-        public MainPage()
+        public async Task<List<string>> OnDrop(object sender, DropEventArgs e)
         {
-            InitializeComponent();
-        }
+            List<string> items = [];
+#if WINDOWS
+            var windowsDragEventArgs = e.PlatformArgs?.DragEventArgs;
+            if (windowsDragEventArgs is null)
+            {
+                Debug.WriteLine("Drop without PlatformArgs.");            
+                return items;
+            }
+            var windowsDragUI = windowsDragEventArgs.DragUIOverride;
 
-        private void OnCounterClicked(object sender, EventArgs e)
-        {
-            count++;
+            if (windowsDragUI is null)
+            {
+                Debug.WriteLine("Windows Drop without DragUIOverride.");
+                return items;
+            }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
+            var draggedOverItems = await windowsDragEventArgs.DataView.GetStorageItemsAsync();
+            if (draggedOverItems is null) {
+                Debug.WriteLine("Windows DragOver without DragUIOverride.");
+                return items;
+            }
+
+            if (draggedOverItems.Any())
+            {
+                Debug.WriteLine($"DragOver with {draggedOverItems.Count()} items.");
+                windowsDragUI.Caption = "Drop to copy";
+                windowsDragUI.IsContentVisible = true;
+                windowsDragUI.IsGlyphVisible = true;
+
+                foreach (var item in draggedOverItems) {
+                    if (item is Windows.Storage.StorageFile file) {
+                        var fileExt = file.FileType.ToLower();
+                        if (fileExt == ".pdf") {
+                            items.Add(file.Path);
+                            Debug.WriteLine($"File ${file.Path} Drop.");
+                        }
+                    }
+                }
+            }
             else
-                CounterBtn.Text = $"Clicked {count} times";
+            {
+                Debug.WriteLine("DragOver with no items.");
+            }
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+#endif
+
+            return items;
         }
 
-        private void ConvertBtn_Clicked(object sender, EventArgs e)
-        {
-            Debug.WriteLine("ConvertBtn_Clicked");
-        }
-
-        private async void DropGestureRecognizer_DragOver(object sender, DragEventArgs e)
-        {
-            Debug.WriteLine("DropGestureRecognizer_DragOver");
+        public async void OnDragOver(object sender, DragEventArgs e) {
 #if WINDOWS
             // Check if the platform arguments contain StorageItems 
             var windowsDragEventArgs = e.PlatformArgs?.DragEventArgs;
@@ -54,7 +79,7 @@ namespace WG.PdfTools
             else
             {
                 Debug.WriteLine("Windows DragOver without DragUIOverride.");
-                 return;
+                return;
             }
 
             var draggedOverItems = await windowsDragEventArgs.DataView.GetStorageItemsAsync();
@@ -77,8 +102,10 @@ namespace WG.PdfTools
                             windowsDragUI.Caption = "Drop pdf file here";
                             windowsDragUI.IsCaptionVisible = true;
                             windowsDragUI.IsGlyphVisible = true;
-                            items.Add(file.Path);
                             Debug.WriteLine($"File ${file.Path} drag over.");
+                            //if (!items.Contains(file.Path)) {
+                            //    items.Add(file.Path);
+                            //}
                         } else {
                             windowsDragUI.Caption = "Only pdf file allowed";
                             windowsDragUI.IsCaptionVisible = true;
@@ -96,16 +123,18 @@ namespace WG.PdfTools
             }
 #endif
         }
-
-        private void DropGestureRecognizer_DragLeave(object sender, DragEventArgs e)
+       
+        public bool MergeFiles(List<string> files, string output)
         {
-            Debug.WriteLine("DropGestureRecognizer_DragLeave");
-        }
-
-        private void DropGestureRecognizer_Drop(object sender, DropEventArgs e)
-        {
-            FilesToMergeListView.ItemsSource = items;
+            if (files is null) return false;
+            if (files.Count < 2) return false;
+            var documentOperator = DocumentOperation.LoadFile(files[0]);
+            for (int i = 1; i < files.Count; i++)
+            {
+                documentOperator =  documentOperator.MergeFile(files[i]);
+            }
+            documentOperator.Save(output);
+            return true;
         }
     }
-
 }
