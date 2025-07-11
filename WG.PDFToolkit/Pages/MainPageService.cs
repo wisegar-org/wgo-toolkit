@@ -126,15 +126,20 @@ namespace WG.PdfTools.Pages
        
         public bool MergeFiles(List<string> files, string output)
         {
-            if (files is null) return false;
-            if (files.Count < 2) return false;
-            var documentOperator = DocumentOperation.LoadFile(files[0]);
-            for (int i = 1; i < files.Count; i++)
-            {
-                documentOperator =  documentOperator.MergeFile(files[i]);
+            try {
+                if (files is null) return false;
+                if (files.Count < 2) return false;
+                var documentOperator = DocumentOperation.LoadFile(files[0]);
+                for (int i = 1; i < files.Count; i++)
+                {
+                    documentOperator = documentOperator.MergeFile(files[i]);
+                }
+                documentOperator.Save(output);
+                return true;
+            } catch (Exception e) { 
+                Console.Error.WriteLine(e.ToString());
+                return false;
             }
-            documentOperator.Save(output);
-            return true;
         }
     }
 }

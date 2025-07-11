@@ -16,24 +16,25 @@ namespace WG.PdfTools
 
         private void OnCounterClicked(object sender, EventArgs e)
         {
-            //count++;
-
-            //if (count == 1)
-            //    CounterBtn.Text = $"Clicked {count} time";
-            //else
-            //    CounterBtn.Text = $"Clicked {count} times";
-
-            //SemanticScreenReader.Announce(CounterBtn.Text);
-
-            //Debug.WriteLine($"Counter clicked {count} times.");
-
             var desktopPath =  Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (string.IsNullOrEmpty(desktopPath)) {
-                Shell.Current.DisplayAlert("Info", "Impossible to retreave windows desktop path", "OK");
+                Shell.Current.DisplayAlert("WG PDFToolkit", "Impossible to retreave windows desktop path", "OK");
+                return;
+            }
+            if (items.Count == 0) {
+                Shell.Current.DisplayAlert("WG PDFToolkit", "Non sono stati caricare dei file", "OK");
+                return;
+            }
+            var today = DateTime.Now;
+            var outputFile = Path.Combine(desktopPath, $"wg-pdftoolkit-merged-file-{today.Year}{today.Month}{today.Day}{today.Hour}{today.Minute}");
+            var result = pageService.MergeFiles(items, outputFile);
+
+            if (result == true) {
+                Shell.Current.DisplayAlert("WG PDFToolkit", $"File output correttamente generato\n{outputFile}", "OK");
                 return;
             }
 
-            pageService.MergeFiles(items, Path.Combine(desktopPath, "mergedfile.pdf"));
+            Shell.Current.DisplayAlert("INFO WG PDFToolkit", "Non è stato possibile elaborare i file", "OK", FlowDirection.RightToLeft);
         }
 
         private void ConvertBtn_Clicked(object sender, EventArgs e)

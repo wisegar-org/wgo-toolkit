@@ -26,16 +26,18 @@
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
                 SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+           
             
+            <ListView x:Name="FilesToMergeListView" >
+            </ListView>
+            
+             
             <Button
               x:Name="CounterBtn"
-              Text="Merge Files" 
-              SemanticProperties.Hint="Counts the number of times you click"
+              Text="Elabora" 
+              SemanticProperties.Hint="Click per unificare i documenti pdf caricati"
               Clicked="OnCounterClicked"
               HorizontalOptions="Fill" />   
-
-            <ListView x:Name="FilesToMergeListView">
-            </ListView>
 
             <!--<Image
                 Source="dotnet_bot.png"

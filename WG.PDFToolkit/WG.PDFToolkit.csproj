@@ -24,7 +24,7 @@
 		<ApplicationTitle>WG.PdfTools</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.wg.pdftools</ApplicationId>
+		<ApplicationId>org.wisegar.wg.pdftools</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
