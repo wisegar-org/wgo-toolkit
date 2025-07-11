@@ -14,7 +14,7 @@ namespace WG.PdfTools
             pageService = new MainPageService();
         }
 
-        private void OnCounterClicked(object sender, EventArgs e)
+        private void OnMergeClicked(object sender, EventArgs e)
         {
             var desktopPath =  Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             if (string.IsNullOrEmpty(desktopPath)) {
@@ -26,7 +26,7 @@ namespace WG.PdfTools
                 return;
             }
             var today = DateTime.Now;
-            var outputFile = Path.Combine(desktopPath, $"wg-pdftoolkit-merged-file-{today.Year}{today.Month}{today.Day}{today.Hour}{today.Minute}");
+            var outputFile = Path.Combine(desktopPath, $"wg-pdftoolkit-merged-file-{today.Year}{today.Month}{today.Day}{today.Hour}{today.Minute}.pdf");
             var result = pageService.MergeFiles(items, outputFile);
 
             if (result == true) {
@@ -45,7 +45,6 @@ namespace WG.PdfTools
         private async void DropGestureRecognizer_DragOver(object sender, DragEventArgs e)
         {
             pageService.OnDragOver(sender, e);
-
         }
 
         private void DropGestureRecognizer_DragLeave(object sender, DragEventArgs e)

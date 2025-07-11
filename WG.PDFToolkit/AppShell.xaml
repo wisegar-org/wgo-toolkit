@@ -5,11 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:WG.PdfTools"
     Shell.FlyoutBehavior="Disabled"
-    Title="WG.PdfTools">
+    Title="WG PDF Toolkit">
 
     <ShellContent
-        Title=""
+        Title="Merge PDF"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
-
+        Route="MainPage" 
+        Icon="merge_96.png"/>
 </Shell>
